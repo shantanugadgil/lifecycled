@@ -17,9 +17,7 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-var (
-	Version string
-)
+var Version string
 
 func main() {
 	app := kingpin.New("lifecycled",

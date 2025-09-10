@@ -63,7 +63,6 @@ func newSQSMessage(instanceID string) *sqs.Message {
 		Time:    time.Now(),
 		Message: m,
 	})
-
 	if err != nil {
 		panic(err)
 	}
@@ -203,5 +202,4 @@ func TestDaemon(t *testing.T) {
 			}
 		})
 	}
-
 }

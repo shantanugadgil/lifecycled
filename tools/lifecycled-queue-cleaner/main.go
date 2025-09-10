@@ -1,9 +1,9 @@
 package main
 
 import (
-	"os"
 	"flag"
 	"log"
+	"os"
 	"regexp"
 	"strings"
 	"sync"
@@ -11,8 +11,8 @@ import (
 	"time"
 
 	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/ec2metadata"
 	"github.com/aws/aws-sdk-go/aws/awserr"
+	"github.com/aws/aws-sdk-go/aws/ec2metadata"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/ec2"
 	"github.com/aws/aws-sdk-go/service/sns"
@@ -37,7 +37,7 @@ func main() {
 	}
 
 	for {
-		count, err := deleteInactiveSubscriptions(session.Must(session.NewSession(&aws.Config{ Region: aws.String(region), })))
+		count, err := deleteInactiveSubscriptions(session.Must(session.NewSession(&aws.Config{Region: aws.String(region)})))
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -51,7 +51,7 @@ func main() {
 	}
 
 	for {
-		count, err := deleteInactiveQueues(session.Must(session.NewSession(&aws.Config{ Region: aws.String(region), })), *parallel)
+		count, err := deleteInactiveQueues(session.Must(session.NewSession(&aws.Config{Region: aws.String(region)})), *parallel)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -75,8 +75,8 @@ func deleteInactiveQueues(sess *session.Session, parallel int) (uint64, error) {
 
 	var wg sync.WaitGroup
 	var count uint64
-	var queuesCh = make(chan string)
-	var errCh = make(chan error)
+	queuesCh := make(chan string)
+	errCh := make(chan error)
 
 	// spawn parallel workers
 	for i := 0; i < parallel; i++ {
@@ -154,7 +154,7 @@ func listQueues(sess *session.Session) ([]string, error) {
 		return nil, err
 	}
 
-	var queues = make([]string, len(resp.QueueUrls))
+	queues := make([]string, len(resp.QueueUrls))
 	for idx, queue := range resp.QueueUrls {
 		queues[idx] = *queue
 	}
@@ -173,7 +173,7 @@ func listInactiveQueues(sess *session.Session) ([]string, error) {
 	log.Printf("Found %d running instances", len(instances))
 
 	// build a map for quick lookups
-	var instancesMap = map[string]struct{}{}
+	instancesMap := map[string]struct{}{}
 	for _, instance := range instances {
 		instancesMap[instance] = struct{}{}
 	}
@@ -200,7 +200,6 @@ func listInactiveQueues(sess *session.Session) ([]string, error) {
 	log.Printf("Found %d inactive queues", len(inactiveQueues))
 
 	return inactiveQueues, nil
-
 }
 
 func deleteQueue(sess *session.Session, queueUrl string) error {
@@ -228,7 +227,7 @@ func topicExists(sess *session.Session, snsTopic string) (bool, error) {
 
 func listInactiveSubscriptions(sess *session.Session) ([]string, error) {
 	var subs []string
-	var topics = make(map[string]bool, 0)
+	topics := make(map[string]bool, 0)
 	var count int
 
 	err := sns.New(sess).ListSubscriptionsPages(&sns.ListSubscriptionsInput{},
